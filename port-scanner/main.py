@@ -21,11 +21,12 @@ THREADS = 50
 TIMEOUT = 1
 LOG_FILE = "results.txt"
 
-# ================= QUEUE =================
+# ================= GLOBALS =================
 queue = Queue()
 lock = threading.Lock()
+open_ports = []   # ⭐ NEW
 
-# ================= LOG =================
+# ================= LOG FUNCTION =================
 def log(message):
     with open(LOG_FILE, "a") as f:
         f.write(message + "\n")
@@ -40,6 +41,7 @@ def scan(port):
 
         if result == 0:
             msg = f"[OPEN] Port {port}"
+            open_ports.append(port)   # ⭐ NEW
         elif result == 1:
             msg = f"[CLOSED] Port {port}"
         else:
@@ -74,5 +76,9 @@ for _ in range(THREADS):
 
 queue.join()
 
-print("\nScan Completed.")
-print(f"Results saved in {LOG_FILE}")
+# ================= FINAL OUTPUT =================
+print("\n[+] Scan Completed.")
+print(f"[+] Results saved in {LOG_FILE}")
+
+print("\n[+] Open Ports Found:")
+print(open_ports)
